@@ -1,30 +1,41 @@
 #!python2
 # -*- coding: utf-8 -*-
 
+"""
+   Read the archived titles from a Grundig video recorder with
+   Archive System as sold at the beginning of the 1990s, such as the
+   GV250VPT.
+"""
+
 import struct
 import mmap
 
-# ETSI EN 300 706
-# Teletext Lateinischer G0-Primaerzeichensatz – Deutsche Variante
-# "#" 0x23  "$" 0x24  "§" 0x40  "^" 0x5E  "_" 0x5F  "°" 0x60
-# Ä 0x5B  Ö 0x5C  Ü 0x5D
-# ä 0x7B  ö 0x7C  ü 0x7D  ß 0x7E
-#
-def convert(input):
-    input = input.replace("¤","$")
-    input = input.replace("@","§")
-    input = input.replace("[","Ä")
-    input = input.replace("\\","Ö")
-    input = input.replace("]","Ü")
-    input = input.replace("`","°")
-    input = input.replace("{","ä")
-    input = input.replace("|","ö")
-    input = input.replace("}","ü")
-    input = input.replace("~","ß")
-    return input
+def convert(inputstr):
+    """
+    ETSI EN 300 706
+    Teletext Lateinischer G0-Primaerzeichensatz – Deutsche Variante
+    "#" 0x23  "$" 0x24  "§" 0x40  "^" 0x5E  "_" 0x5F  "°" 0x60
+    Ä 0x5B  Ö 0x5C  Ü 0x5D
+    ä 0x7B  ö 0x7C  ü 0x7D  ß 0x7E
+    """
 
-def main():
-    infilename = "binary.bin"
+    inputstr = inputstr.replace("¤", "$")
+    inputstr = inputstr.replace("@", "§")
+    inputstr = inputstr.replace("[", "Ä")
+    inputstr = inputstr.replace("\\", "Ö")
+    inputstr = inputstr.replace("]", "Ü")
+    inputstr = inputstr.replace("`", "°")
+    inputstr = inputstr.replace("{", "ä")
+    inputstr = inputstr.replace("|", "ö")
+    inputstr = inputstr.replace("}", "ü")
+    inputstr = inputstr.replace("~", "ß")
+    return inputstr
+
+def main(infilename):
+    """
+    read file infilename and dump the recordings found to stdout
+    """
+
     infilehandle = open(infilename, 'r+b')
     # memory map input file
     infilemap = mmap.mmap(infilehandle.fileno(), 0)
@@ -56,13 +67,13 @@ def main():
 
     for i in range(700):
         entry = struct.unpack_from('BBBBBBB30sBBB', recordings, i*40)
-        if entry[0] is 255:
+        if entry[0] == 255:
             break
 
         # first nibble: category index
         catidx = entry[0] / 16
         # nibbles 2-4: tape number
-        tape   = 100 * (entry[0] % 16) + 10 * (entry[1] / 16)  + entry[1] % 16
+        tape = 100 * (entry[0] % 16) + 10 * (entry[1] / 16)  + entry[1] % 16
 
         # so far only two values seen: 0xf5 and 0xb9. Suspicion is
         # that this encodes if the recording is in longplay or
@@ -73,28 +84,30 @@ def main():
 
         # data is stored as "readable hex", 0x01 0x38 means start time "01:38"
         starthour = 10 * (entry[3] / 16) + entry[3] % 16
-        startmin  = 10 * (entry[4] / 16) + entry[4] % 16
+        startmin = 10 * (entry[4] / 16) + entry[4] % 16
 
-        endhour   = 10 * (entry[5] / 16) + entry[5] % 16
-        endmin    = 10 * (entry[6] / 16) + entry[6] % 16
+        endhour = 10 * (entry[5] / 16) + entry[5] % 16
+        endmin = 10 * (entry[6] / 16) + entry[6] % 16
 
         # 30 chars in teletext encoding
         title = convert(entry[7])
 
         # data is storead as "readable hex" again
-        day    = 10 * (entry[8] / 16)  + entry[8] % 16
-        month  = 10 * (entry[9] / 16)  + entry[9] % 16
-        year   = 1900 + 10 * (entry[10] / 16) + entry[10] % 16
+        day = 10 * (entry[8] / 16)  + entry[8] % 16
+        month = 10 * (entry[9] / 16)  + entry[9] % 16
+        year = 1900 + 10 * (entry[10] / 16) + entry[10] % 16
         if year < 1970:
             year += 100
 
-        print "%3.3d %s 0x%x %02.2d:%02.2d-%02.2d:%02.2d %02.2d.%02.2d.%04.4d %s" % (tape, categories[catidx],
-                                                                                     flags, starthour, startmin,
-                                                                                     endhour, endmin ,day, month, year,
-                                                                                     title)
+        print "%3.3d %s 0x%x %02.2d:%02.2d-%02.2d:%02.2d %02.2d.%02.2d.%04.4d %s" % (
+            tape, categories[catidx],
+            flags, starthour, startmin,
+            endhour, endmin, day, month, year,
+            title)
+
     if infilemap:
         infilemap.close()
     if infilehandle:
         infilehandle.close()
 
-main()
+main("binary.bin")
