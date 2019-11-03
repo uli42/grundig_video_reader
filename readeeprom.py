@@ -3,7 +3,6 @@
 
 import struct
 import mmap
-import os
 
 # ETSI EN 300 706
 # Teletext Lateinischer G0-Primaerzeichensatz – Deutsche Variante
@@ -29,7 +28,6 @@ def main():
     infilehandle = open(infilename, 'r+b')
     # memory map input file     
     infilemap = mmap.mmap(infilehandle.fileno(), 0)
-    infilesize = infilemap.size()
 
     infilemap.seek(4678)
     catdata = infilemap.read(15*6)
