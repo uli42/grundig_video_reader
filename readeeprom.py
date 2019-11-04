@@ -12,7 +12,7 @@ import mmap
 
 def convert(inputstr):
     """
-    ETSI EN 300 706
+    ETSI EN 300 706 (lation primary charset - german variant)
     Teletext Lateinischer G0-Primaerzeichensatz – Deutsche Variante
     "#" 0x23  "$" 0x24  "§" 0x40  "^" 0x5E  "_" 0x5F  "°" 0x60
     Ä 0x5B  Ö 0x5C  Ü 0x5D
@@ -57,13 +57,12 @@ def main(infilename):
     # 000012b0  6b 72 69 65 67 20 20 20  20 20 20 20 20 20 20 20       |krieg           |
     # 000012c0  20 20 20 20 20| 11 04 94                               |     ...|
 
-    # bei _einem_ EEPROM:
-    # - 700 Titel mit 40 Zeichen
-    # - 968Byte Timer-Puffer und Senderkennungen
-    # - 700 dreistellige Badnnummern von 001 bis 999 möglich
-    # - "Mit dem Eintragen eines Titels ins Archiv wird die
-    #   Bandlänge (Cassettenspielzeit) der jweiligen
-    #   Cassettenummer zugeordnet."
+    # with _one_ EEPROM:
+    # - 700 titles with 40 chars
+    # - 968 Bytes of timer buffer and channels and station names
+    # - 700 3-digit tape numbers from 001 to 999 possible
+    # - "On insertion of a title into the archive the tape length will
+    #   be assigned to the rcassette number"
 
     for i in range(700):
         entry = struct.unpack_from('BBBBBBB30sBBB', recordings, i*40)
