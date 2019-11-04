@@ -89,6 +89,10 @@ def main(infilename):
         endhour = 10 * (entry[5] / 16) + entry[5] % 16
         endmin = 10 * (entry[6] / 16) + entry[6] % 16
 
+        durationmins = (endhour - starthour) * 60 + endmin - startmin
+        durationhours = durationmins / 60
+        durationmins = durationmins % 60
+
         # 30 chars in teletext encoding
         title = convert(entry[7])
 
@@ -99,10 +103,12 @@ def main(infilename):
         if year < 1970:
             year += 100
 
-        print "%3.3d %s 0x%x %02.2d:%02.2d-%02.2d:%02.2d %02.2d.%02.2d.%04.4d %s" % (
+        print "%3.3d %s 0x%x %02.2d:%02.2d-%02.2d:%02.2d (%02.2d:%02.2d) %02.2d.%02.2d.%04.4d %s" % (
             tape, categories[catidx],
             flags, starthour, startmin,
-            endhour, endmin, day, month, year,
+            endhour, endmin,
+            durationhours, durationmins,
+            day, month, year,
             title)
 
     if infilemap:
