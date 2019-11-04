@@ -75,12 +75,11 @@ def main(infilename):
         # nibbles 2-4: tape number
         tape = 100 * (entry[0] % 16) + 10 * (entry[1] / 16)  + entry[1] % 16
 
-        # so far only two values seen: 0xf5 and 0xb9. Suspicion is
-        # that this encodes if the recording is in longplay or
-        # not. We are also missing the tape length...
-        # 0xf5 = %1111 0101
-        # 0Xb9 = %1011 1001
-        flags = entry[2]
+        # so far only two values seen: 0xf5 and 0xb9.
+        # 0xf5 = %1111 0101  245
+        # 0Xb9 = %1011 1001  185
+        # -> it's the tape length in minutes
+        tapelen = entry[2]
 
         # data is stored as "readable hex", 0x01 0x38 means start time "01:38"
         starthour = 10 * (entry[3] / 16) + entry[3] % 16
@@ -103,9 +102,10 @@ def main(infilename):
         if year < 1970:
             year += 100
 
-        print "%3.3d %s 0x%x %02.2d:%02.2d-%02.2d:%02.2d (%02.2d:%02.2d) %02.2d.%02.2d.%04.4d %s" % (
-            tape, categories[catidx],
-            flags, starthour, startmin,
+        print "%3.3d %3.3dmin %s %02.2d:%02.2d-%02.2d:%02.2d (%02.2d:%02.2d) %02.2d.%02.2d.%04.4d %s" % (
+            tape, tapelen,
+            categories[catidx],
+            starthour, startmin,
             endhour, endmin,
             durationhours, durationmins,
             day, month, year,
