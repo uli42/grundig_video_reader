@@ -1,5 +1,6 @@
-A little tool to eead the archived titles from a Grundig video recorder with Archive
-System as sold at the beginning of the 1990s, such as the GV250VPT.
+A little tool to read the archived titles from a Grundig video
+recorder with Archive System as sold at the beginning of the 1990s,
+such as the GV250VPT.
 
 These systems were able to store the tape contents for recordings on
 an EEPROM chip. Every tape you were using was marked and could be
@@ -7,7 +8,7 @@ recognized by the recorder when it was re-inserted. Every recording
 was stored on the EEPROM with tape number, tape position, duration,
 recording date and title. When using this system you did not have to
 write down what was stored on your tapes but could look it up directly
-on the recorder and make the recorder comfortable position the tape
+on the recorder and make the recorder comfortably position the tape
 right at the beginning of the desired title. You could also identify
 free slots for new recordings.
 
