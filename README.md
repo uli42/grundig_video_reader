@@ -19,8 +19,8 @@ contained in the EEPROM dump.
 How to use:
 
 Extract the EEPROM from the device and read it using some EEPROM
-reader. Then rename the resulting 32kB binary to =binary.bin= and run
-==readeeprom.py= to dump the archive contents.
+reader. Then rename the resulting 32kB binary to `binary.bin` and run
+`readeeprom.py` to dump the archive contents.
 
 It will print a list of all recordings line by line. You can
 sort the output by tape number and start position like this:
